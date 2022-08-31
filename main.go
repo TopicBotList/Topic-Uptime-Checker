@@ -61,6 +61,6 @@ func main() {
       }
 }
 
-//sending a damn email to the owne
+//sending a damn email to the owner
 
 
