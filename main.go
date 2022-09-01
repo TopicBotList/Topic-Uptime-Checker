@@ -5,8 +5,6 @@ import(
 	"time"
 	"net/http"
 	"log"
-	"bytes"
-	"encoding/json"
 )
 
 const (
