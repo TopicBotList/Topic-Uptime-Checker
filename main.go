@@ -8,7 +8,7 @@ import(
 )
 
 const (
-	siteUpCheckTimeInterval = 5
+	siteUpCheckTimeInterval = 20
 	siteUrl = "https://topiclist.xyz"
 )
 
