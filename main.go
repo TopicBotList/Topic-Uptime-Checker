@@ -1,64 +1,45 @@
 package main
 
-import(
+import (
 	"fmt"
-	"time"
-	"net/http"
 	"log"
+	"net/http"
+	"strings"
+	"time"
 )
 
 const (
-	siteUpCheckTimeInterval = 20
-	siteUrl = "https://topiclist.xyz"
+	siteUpCheckTimeInterval = 10 * time.Second
+	siteUrl                 = "https://google.com"
+	webhookURL              = "https://discord.com/api/webhooks/WEBHOOK_ID/WEBHOOK_TOKEN"
 )
 
 func main() {
+	for range time.Tick(siteUpCheckTimeInterval) {
+		resp, err := http.Get(siteUrl)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	// Idk what i am coding at this point
-	for range time.Tick(siteUpCheckTimeInterval * time.second) {
-	// Send request to site 
+		if resp.StatusCode != http.StatusOK {
+			fmt.Println("Website Response Is:", resp.StatusCode, http.StatusText(resp.StatusCode))
+			sendWebhook("Website is down!")
+		} else {
+			fmt.Println("All Good Chef!")
+		}
 
-	resp, err:= https.Get(siteUrl)
-	if(err !=nil) {
-		log.Fatal(err)	
+		resp.Body.Close()
 	}
-	// If responce is down then
-	if resp.StatusCode != 200 {
-	 fmt.Println("Website Response Is :", resp.StatusCode, http.StatusText(resp.StatusCode))
-  } else {
-	fmt.println("All Good Captin")
-    }
-
-  }
-
-
 }
 
-// Send Webhook Using Discord GO
+func sendWebhook(message string) {
+	payload := `{"content":"` + message + `"}`
 
-func main() {
-	hook := goWebhook.CreateWebhook()
-	hook.AddField("New Title","New Value",true)
-	hook.SendWebook("https://discordapp.com/api/yourwebhook") // no tests to check if webhook was successful
-	// or
-	webhookReq, err := hook.SendWebook("https://discordapp.com/api/yourwebhook")    // use variable to check if post request was successful
-	
-	if err !=nil{
-	fmt.Println("Unexpected error sending webhook!")      
-	
-	if webhookReq.StatusCode == 204 { //204 status is successful webhook post
-		if webhookReq.StatusCode == 200 { //200 Stats is send
-	fmt.Println("Webhook sent")
-	}else{
-	fmt.Println("Webhook failed")
-	fmt.Println(webhookReq.StatusCode)
-  
-            }
-
-         }
-      }
+	resp, err := http.Post(webhookURL, "application/json", strings.NewReader(payload))
+	if err != nil {
+		log.Println("Failed to send webhook:", err)
+	} else {
+		defer resp.Body.Close()
+		fmt.Println("Webhook notification sent successfully")
+	}
 }
-
-//sending a damn email to the owner
-
-
